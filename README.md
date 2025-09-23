@@ -4,6 +4,7 @@
 
 
 # how to use :
+- download and move the .exe file to a specific folder otherwise its execution will install its requirements in the downloaded folder  
 - takes some time in first run to setup
 - add any torrent and stream
 
