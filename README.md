@@ -12,7 +12,7 @@
 - room & server should be same as your friend
 - add localhost as trusted domain in syncplay to work properly
 
-# requirement :
+# requirements :
 - vlc is recommanded as I used this when building this
 - Windows only
 
