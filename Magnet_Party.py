@@ -20,6 +20,95 @@ from ctypes import wintypes
 
 LOG_FILE = "cached_files/logs.txt"
 PLAYER_PATH = ""
+PLAYER_NAME = ""
+
+BASE = "https://yts.mx/api/v2/"
+
+def search_yts(query, limit=5):
+    url = f"{BASE}list_movies.json"
+    params = {"query_term": query, "limit": limit}
+    resp = requests.get(url, params=params)
+    resp.raise_for_status()
+    data = resp.json()
+    
+    if data["status"] != "ok" or not data["data"]["movie_count"]:
+        return []
+    
+    results = []
+    for movie in data["data"]["movies"]:
+        torrents = []
+        for t in movie.get("torrents", []):
+            torrents.append({
+                "quality": t["quality"],
+                "type": t["type"],
+                "size": t["size"],
+                "seeds": t["seeds"],
+                "peers": t["peers"],
+                "hash": t["hash"],
+                "movie_title": movie["title_long"]
+            })
+        results.append({
+            "title": movie["title_long"],
+            "year": movie["year"],
+            "rating": movie["rating"],
+            "torrents": torrents
+        })
+    return results
+
+def make_magnet(hashcode, title):
+    return (
+        f"magnet:?xt=urn:btih:{hashcode}"
+        f"&dn={title.replace(' ', '+')}"
+        f"&tr=udp://tracker.openbittorrent.com:80/announce"
+    )
+
+def search_movie():
+    print("--- YTS ---")
+    print("Enter a movie name : ")
+    query = input("main->movie search > ").strip()
+    movies = search_yts(query)
+    
+    if not movies:
+        print("No results found.")
+    else:
+        # Show movies
+        for i, m in enumerate(movies, start=1):
+            print(f"{i}. {m['title']} ({m['year']}) ⭐ {m['rating']}")
+        
+        while True:
+            print("\nSelect a movie or b to back : ")
+            choice = input("main->movie search > ")
+            if choice =="b":
+                return
+            if choice.isdigit() and int(choice)<=len(movies):
+                choice = int(choice) - 1
+                movie = movies[choice]
+                break
+            else:
+                print("invalid input")
+        
+        # Show torrents
+        for j, t in enumerate(movie['torrents'], start=1):
+            print(f"{j}. {t['quality']} {t['type']} | {t['size']} | S:{t['seeds']} P:{t['peers']}")
+        
+
+        while True:
+            print("\nSelect resulation or b to back : ")
+            t_choice = input("main->movie search > ")
+            if t_choice =="b":
+                return
+            if t_choice.isdigit() and int(t_choice) <= len(movie['torrents']):
+                t_choice = int(t_choice) - 1
+                torrent = movie['torrents'][t_choice]
+                break
+            else : 
+                print("invalid input")
+        
+        # Only now show magnet
+        magnet = make_magnet(torrent["hash"], torrent["movie_title"])
+        
+        add(magnet)
+
 
 def run_as_admin_and_wait(command):
     """
@@ -159,9 +248,9 @@ def add_to_path_temp(directory_to_add):
     current_path = os.environ.get('PATH', '')
     if directory_to_add not in current_path:
         os.environ['PATH'] = f"{directory_to_add};{current_path}"
-        print(f"Added '{directory_to_add}' to PATH for current process.")
+        return
     else:
-        print(f"'{directory_to_add}' is already in PATH for current process.")
+        return
 
 
 def read_file_safely(filename):
@@ -175,13 +264,17 @@ def read_file_safely(filename):
         return None
 
 def load_player():
-    player = read_file_safely("player.txt")
-    if(player==None):
-        print("Player hasn't set yet")
+    info = read_file_safely("player.txt")
+    if(info==None):
+        print("Player isn't set yet")
         playerSet()
+    info = read_file_safely("player.txt")
+    lines = info.split("\n")
+    global PLAYER_NAME
+    PLAYER_NAME = lines[0]
     global PLAYER_PATH 
-    PLAYER_PATH =  player
-    return True
+    PLAYER_PATH =  lines[1]
+
 
 
 def handle_remove_readonly(func, path, exc_info):
@@ -337,11 +430,10 @@ def getSortedLogFileEntries():
 def stream(number):
     number = int(number)
     magnetLink = retrieveMagnetLink(number=number)
-    add_to_path_temp(PLAYER_PATH)
     if not magnetLink:
         print("Invalid selection or missing links.")
         return
-    os.system(f'start cmd /k webtorrent "{magnetLink}" --keep-seeding --out cached_files --playlist --vlc ')
+    os.system(f'start cmd /k webtorrent "{magnetLink}" --keep-seeding --out cached_files --playlist --{PLAYER_NAME} ')
 
             
             
@@ -357,12 +449,12 @@ def playConsole():
         entry_type = "[DIR]" if os.path.isdir(os.path.join("cached_files", d)) else "[FILE]"
         print(f'{i}- {d} {entry_type}')
     
-    print("Enter the respective number to stream or 'e' to exit:")
+    print("Enter the respective number to stream or b to back:")
     while True:
-        print("main->play >", end="")
+        print("main->play > ", end="")
         command = input()
         command = command.strip()
-        if command == "e":
+        if command == "b":
             return
         elif not command.isdigit() or int(command) < 1 or int(command) > len(sorted_entries):
             print("Invalid input. Please enter a valid number.")
@@ -380,7 +472,7 @@ def add(MAGNET=None):
     with open(LOG_FILE, "r") as f:
         existing_log = f.read()
         if MAGNET in existing_log:
-            print("Existing log found")
+            print("movie is already added")
             return
 
     # Start WebTorrent in Python (unbuffered)
@@ -522,7 +614,15 @@ def playerSet():
     
     while True:
         try:
-            choice = input(f"\nChoose a player (1-{len(players_list)}): ").strip()
+
+            if PLAYER_NAME !="":
+                print("\nChoose a player or b to back : ")
+            else:
+                print("\nChoose a player : ", end="")
+                choice = input().strip()
+            
+            if choice =="b" and PLAYER_NAME != "":
+                return
             
             if choice == str(len(players_list) + 1):
                 print("Operation cancelled.")
@@ -536,12 +636,13 @@ def playerSet():
                 print(f"\nYou selected: {selected_player}")
                 print(f"Executable path: {selected_path}")
                 
-                confirm = input("Confirm? y|yes : ").strip().lower()
+                confirm = input("Confirm? y or yes : ").strip().lower()
                 if confirm in ['y', 'yes']:
                     print(f"\nPlayer Selected Successfully")
                     with open("player.txt","w") as file:
-                            path = str(selected_path)
-                            file.write(path.lower())
+                            player_name = str(selected_player).lower()
+                            path = str(selected_path).lower()
+                            file.write(player_name+"\n"+path)
                 else:
                     print("Operation cancelled.")
                 return
@@ -662,11 +763,11 @@ def streamWithFriend():
             entry_type = "[DIR]" if os.path.isdir(os.path.join("cached_files", d)) else "[FILE]"
             print(f'{i}- {d} {entry_type}')
         
-        print("Enter the respective number to stream or 'e' to exit:")
+        print("Enter the respective number to stream or 'b' to back:")
         while True:
-            print("main->watch together >", end="")
+            print("main->watch together > ", end="")
             command = input().strip()
-            if command == "e":
+            if command == "b":
                 return
             elif not command.isdigit() or int(command) < 1 or int(command) > len(sorted_entries):
                 print("Invalid input. Please enter a valid number.")
@@ -718,7 +819,9 @@ def initNodeJSandWebtorrentCli():
 
 def requirements():
     initNodeJSandWebtorrentCli()
+    clearScreen()
     initSyncPlay()
+    clearScreen()
     initCacheFiles()
     load_player()
     initLog()
@@ -729,12 +832,12 @@ print("Ready to launch...")
 while True:
     time.sleep(.5)
     clearScreen()
-    print("Commands: add | play | watch together | media player | cache_clear | help | exit")
-    print("Enter help for to know how to use")
+    print("Commands: add | play | watch together | movie search | media player | cache clear | help | exit")
+    print("Enter help to know how to use")
     print("main > ", end="")
     command = input()
     command = command.strip().lower()
-    if command =="e" or command == "exit":
+    if command =="e" or command == "exit" or command=="b":
         print("Exiting...")
         sys.exit()
     elif command == "cc" or command == "cache_clear":
@@ -745,30 +848,37 @@ while True:
         playConsole()
     elif command == "add" or command == "a":
         clearScreen()
-        print("Enter the magnet link or 'e' to exit:")
-        print("main->add >", end="")
-        magnet = input().strip().lower()  # convert to lowercase
+        print("Enter the magnet link or b to back:")
+        print("main->add > ", end="")
+        magnet = input().strip().lower()
+        
+        if magnet =="b" :
+            continue
+    
         if magnet.startswith("magnet:"):
             add(MAGNET=magnet)
-        elif magnet == 'e':
-            continue
         else:
             print("Invalid magnet link. Please try again.")
 
     elif command=="media player" or command =="mp":
+        clearScreen()
         playerSet()
     elif command=="watch together" or command =="wt":
+        clearScreen()
         streamWithFriend()
+    elif command=="movie search" or command =="ms":
+        clearScreen()
+        search_movie()
     elif command == 'h' or command == 'help':
         print("Available commands:")
         print(" add or a            - Add a new torrent via magnet link")
         print(" play or p           - Stream a torrent from the list")
         print(" watch together or wt- watch with your friend")
+        print(" movie search or ms  - search a movie from yts database")
         print(" media player or mp  - selecting media player")
         print(" cache_clear or cc   - Clear cached files and logs")
         print(" help or h           - Show this help message")
         print(" exit or e           - Exit the application")
-        print(" usage: first add torrent links")
         input("Press Enter to continue...")
     else:
         print("Invalid command. Please try again.")
