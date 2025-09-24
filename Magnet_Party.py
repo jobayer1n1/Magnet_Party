@@ -832,8 +832,8 @@ print("Ready to launch...")
 while True:
     time.sleep(.5)
     clearScreen()
-    print("Commands: add | play | watch together | movie search | media player | cache clear | help | exit")
-    print("Enter help to know how to use")
+    print("Commands: add | play | watch together | search movie | media player | cache clear | help | exit")
+    print("Enter help to know how to use\t\t\t\t\t\t\t  version - 1.1")
     print("main > ", end="")
     command = input()
     command = command.strip().lower()
@@ -848,17 +848,19 @@ while True:
         playConsole()
     elif command == "add" or command == "a":
         clearScreen()
-        print("Enter the magnet link or b to back:")
-        print("main->add > ", end="")
-        magnet = input().strip().lower()
+        while True: 
+            print("Enter the magnet link or b to back:")
+            print("main->add > ", end="")
+            magnet = input().strip().lower()
+            
+            if magnet =="b" :
+                break
         
-        if magnet =="b" :
-            continue
-    
-        if magnet.startswith("magnet:"):
-            add(MAGNET=magnet)
-        else:
-            print("Invalid magnet link. Please try again.")
+            if magnet.startswith("magnet:"):
+                add(MAGNET=magnet)
+                break
+            else:
+                print("Invalid magnet link. Please try again.\n")
 
     elif command=="media player" or command =="mp":
         clearScreen()
@@ -866,7 +868,7 @@ while True:
     elif command=="watch together" or command =="wt":
         clearScreen()
         streamWithFriend()
-    elif command=="movie search" or command =="ms":
+    elif command=="search movie" or command =="sm":
         clearScreen()
         search_movie()
     elif command == 'h' or command == 'help':
