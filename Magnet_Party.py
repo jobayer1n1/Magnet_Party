@@ -77,7 +77,7 @@ def search_movie():
         # Show movies
 
         for i, m in enumerate(movies, start=1):
-            print(f"{i}. {m['title']} | year:{m['year']} | imdb:{m['rating']} | seeds:{m['seeds']} | peers:{m['peers']}")
+            print(f"{i}. {m['title']} imdb:{m['rating']}⭐")
         
         while True:
             print("\nSelect a movie or b to back : ")
