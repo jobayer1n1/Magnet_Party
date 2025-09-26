@@ -51,6 +51,8 @@ def search_yts(query, limit=5):
             "title": movie["title_long"],
             "year": movie["year"],
             "rating": movie["rating"],
+            "seeds" : t["seeds"],
+            "peers" : t["peers"],
             "torrents": torrents
         })
     return results
@@ -73,8 +75,9 @@ def search_movie():
     else:
         print("\nResults: ")
         # Show movies
+
         for i, m in enumerate(movies, start=1):
-            print(f"{i}. {m['title']} ({m['year']}) ⭐ {m['rating']}")
+            print(f"{i}. {m['title']} | year:{m['year']} | imdb:{m['rating']} | seeds:{m['seeds']} | peers:{m['peers']}")
         
         while True:
             print("\nSelect a movie or b to back : ")
