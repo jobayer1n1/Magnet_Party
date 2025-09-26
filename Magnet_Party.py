@@ -71,6 +71,7 @@ def search_movie():
     if not movies:
         print("No results found.")
     else:
+        print("\nResults: ")
         # Show movies
         for i, m in enumerate(movies, start=1):
             print(f"{i}. {m['title']} ({m['year']}) ⭐ {m['rating']}")
@@ -87,6 +88,7 @@ def search_movie():
             else:
                 print("invalid input")
         
+        print("\nResults: ")
         # Show torrents
         for j, t in enumerate(movie['torrents'], start=1):
             print(f"{j}. {t['quality']} {t['type']} | {t['size']} | S:{t['seeds']} P:{t['peers']}")
@@ -475,6 +477,7 @@ def add(MAGNET=None):
             print("movie is already added")
             return
 
+    print("Magnet is adding...")
     # Start WebTorrent in Python (unbuffered)
     proc = subprocess.Popen(
         f'webtorrent "{MAGNET}" --keep-seeding',
@@ -501,7 +504,7 @@ def add(MAGNET=None):
     else:
         print("something went wrong, no link found")
         return
-    print(f"Torrent added successfully.")
+    print(f"Magnet added successfully.")
 
 
 
@@ -615,12 +618,13 @@ def playerSet():
     while True:
         try:
 
+            choice = ""
+
             if PLAYER_NAME !="":
                 print("\nChoose a player or b to back : ")
             else:
                 print("\nChoose a player : ", end="")
-                choice = input().strip()
-            
+            choice = input("main->media player > ").strip()
             if choice =="b" and PLAYER_NAME != "":
                 return
             
@@ -819,21 +823,19 @@ def initNodeJSandWebtorrentCli():
 
 def requirements():
     initNodeJSandWebtorrentCli()
-    clearScreen()
     initSyncPlay()
-    clearScreen()
     initCacheFiles()
     load_player()
     initLog()
 
 #main loop
 requirements()
-print("Ready to launch...")
+print("Launching...")
 while True:
     time.sleep(.5)
     clearScreen()
-    print("Commands: add | play | watch together | search movie | media player | cache clear | help | exit")
-    print("Enter help to know how to use\t\t\t\t\t\t\t  version - 1.1")
+    print("Commands: add magnet | play | watch together | search movie | media player | cache clear | help | exit")
+    print("Enter help to know how to use\t\t\t\t\t\t\t\t version - 1.1")
     print("main > ", end="")
     command = input()
     command = command.strip().lower()
@@ -878,7 +880,7 @@ while True:
         print(" watch together or wt- watch with your friend")
         print(" movie search or ms  - search a movie from yts database")
         print(" media player or mp  - selecting media player")
-        print(" cache_clear or cc   - Clear cached files and logs")
+        print(" cache clear or cc   - Clear cached files and logs")
         print(" help or h           - Show this help message")
         print(" exit or e           - Exit the application")
         input("Press Enter to continue...")
