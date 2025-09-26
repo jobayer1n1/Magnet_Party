@@ -22,10 +22,10 @@ LOG_FILE = "cached_files/logs.txt"
 PLAYER_PATH = ""
 PLAYER_NAME = ""
 
-BASE = "https://yts.mx/api/v2/"
+YTS_API = "https://yts.mx/api/v2/"
 
 def search_yts(query, limit=5):
-    url = f"{BASE}list_movies.json"
+    url = f"{YTS_API}list_movies.json"
     params = {"query_term": query, "limit": limit}
     resp = requests.get(url, params=params)
     resp.raise_for_status()
@@ -229,18 +229,19 @@ def install_nodejs_and_webtorrent():
     if not node_ok:
         print("Node.js missing → launching installer (waiting)...")
         if not install_nodejs():
-            print("✘ Node.js installation failed.")
+            print("Node.js installation failed.")
             return False
-        print("✔ Node.js installed successfully.")
+        print("Node.js installed successfully.")
 
     if not webtorrent_ok:
-        print("⚙ webtorrent-cli missing → launching installer (waiting)...")
+        print("")
+        print("webtorrent-cli missing → launching installer (waiting)...")
         if not install_webtorrent():
-            print("✘ webtorrent-cli installation failed.")
+            print("webtorrent-cli installation failed.")
             return False
-        print("✔ webtorrent-cli installed successfully.")
+        print("webtorrent-cli installed successfully.")
 
-    print("Setup complete: Node.js and webtorrent-cli are installed.")
+    print("Node.js and webtorrent-cli are installed.\n")
     return True
 
 def add_to_path_temp(directory_to_add):
@@ -541,6 +542,7 @@ def install_syncplay_portable():
     
     # Optionally, remove the zip file after extraction
     os.remove(zip_path)
+    print("Syncplay installed successfully\n")
 
 
 def find_webtorrent_media_players():
@@ -622,9 +624,10 @@ def playerSet():
 
             if PLAYER_NAME !="":
                 print("\nChoose a player or b to back : ")
+                choice = input("main->media player > ").strip()
             else:
-                print("\nChoose a player : ", end="")
-            choice = input("main->media player > ").strip()
+                print("\nChoose a player : ")
+                choice = input("setup > ").strip()
             if choice =="b" and PLAYER_NAME != "":
                 return
             
@@ -642,7 +645,7 @@ def playerSet():
                 
                 confirm = input("Confirm? y or yes : ").strip().lower()
                 if confirm in ['y', 'yes']:
-                    print(f"\nPlayer Selected Successfully")
+                    print(f"\nPlayer Selected Successfully\n")
                     with open("player.txt","w") as file:
                             player_name = str(selected_player).lower()
                             path = str(selected_path).lower()
