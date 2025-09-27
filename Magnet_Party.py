@@ -24,9 +24,9 @@ PLAYER_NAME = ""
 
 YTS_API = "https://yts.mx/api/v2/"
 
-def search_yts(query, limit=5):
+def search_yts(query):
     url = f"{YTS_API}list_movies.json"
-    params = {"query_term": query, "limit": limit}
+    params = {"query_term": query}
     resp = requests.get(url, params=params)
     resp.raise_for_status()
     data = resp.json()
@@ -77,7 +77,7 @@ def search_movie():
         # Show movies
 
         for i, m in enumerate(movies, start=1):
-            print(f"{i}. {m['title']} imdb:{m['rating']}⭐")
+            print(f"{i}. {m['title']} imdb: {m['rating']} ⭐")
         
         while True:
             print("\nSelect a movie or b to back : ")
