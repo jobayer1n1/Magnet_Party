@@ -4,7 +4,7 @@
 - Search movies from YTS database
 
 # Setup :
-- Download the .exe file from the releases and move it to a new folder
+- Download the zip file from releases
 - Run the .exe file and wait for it to install requirements
 
 # Syncplay : 
