@@ -2,6 +2,7 @@
 - Stream torrents
 - Watch with friends
 - Search movies from YTS database
+- Letterboxd Watchlist data load
 
 # Setup :
 - Download the zip file from releases
