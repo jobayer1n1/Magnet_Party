@@ -84,6 +84,7 @@ def install_webtorrent():
     """Install webtorrent-cli globally in elevated terminal, wait for it to finish."""
     npm_cmd = "npm.cmd" if os.name == "nt" else "npm"
     cmd = f'{npm_cmd} install -g webtorrent-cli'
+    print("Installing webtorrent-cli...")
     return run_as_admin_and_wait(cmd)
 
 
@@ -137,4 +138,3 @@ def install_nodejs_and_webtorrent():
         refresh_environment_variables()
     print("Node.js and webtorrent-cli are installed.\n")
     return True
-
