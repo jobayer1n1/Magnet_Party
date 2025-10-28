@@ -1,32 +1,59 @@
 <p align="center">
-  <img src="icon.png" alt="Logo" width="120" />
-  <br/>
-  <t>Magnet_Party</t>
+  <img src="icon.png" alt="Magnet_Party Logo" width="120" />
 </p>
 
-# Features :
-- Stream torrents
-- Watch with friends
-- Search movies from YTS database
-- Search series from 1377x database
+<h1 align="center">Magnet_Party</h1>
 
-# Setup :
-- Download the zip file from releases
-- Unzip it and run the .exe file and wait for it to install requirements
+<p align="center">
+  🎬 Stream torrents instantly • 🎧 Watch with friends • 🔍 Explore movies and series
+</p>
 
-# Syncplay : 
-- Add localhost as trusted domain in syncplay to work properly
+<p align="center">
+  <a href="https://github.com/jobayer1n1/Magnet_Party/releases"><img src="https://img.shields.io/github/v/release/jobayer1n1/Magnet_Party?style=for-the-badge&color=CBF3BB" alt="Release"></a>
+  <a href="https://github.com/jobayer1n1/Magnet_Party/issues"><img src="https://img.shields.io/github/issues/jobayer1n1/Magnet_Party?style=for-the-badge&color=BBDCE5" alt="Issues"></a>
+  <a href="https://github.com/jobayer1n1/Magnet_Party/LICENSE"><img src="https://img.shields.io/github/license/jobayer1n1/Magnet_Party?style=for-the-badge&color=F5EFE6" alt="License"></a>
+</p>
 
-# Requirements :
-- VLC is recommanded as I used VLC for building this
-- Windows only
-  
-# Notes :
-- Webtorrent server should be terminated manually
-- This supports only one webtorrent server at a time
+---
 
-# Uninstallation :
-- Delete the whole folder
-- Uninstall nodejs manually from windows app manager
+## ✨ Features
+- 🚀 Stream torrents instantly  
+- 👥 Watch with friends (Syncplay integration)  
+- 🎞️ Search movies from **YTS** database  
+- 📺 Search TV series from **1377x** database  
 
+---
 
+## ⚙️ Setup
+1. **Download** the ZIP file from the [Releases](https://github.com/YourUsername/Magnet_Party/releases) page.  
+2. **Unzip** the folder.  
+3. **Run the `.exe` file** and wait while it installs all required dependencies.  
+
+---
+
+## 🧩 Syncplay Configuration
+- Add **`localhost`** as a **trusted domain** in your Syncplay settings for Magnet_Party to work properly.  
+
+---
+
+## 🖥️ Requirements
+- **VLC Media Player** (recommended — Magnet_Party was built around VLC)
+- 💻 **Windows OS** (currently supported platform only)
+
+---
+
+## ⚠️ Notes
+- The **WebTorrent server** must be terminated manually after use.  
+- Supports only **one active WebTorrent server instance** at a time.  
+
+---
+
+## 🧹 Uninstallation
+1. Delete the entire Magnet_Party folder.  
+2. Uninstall **Node.js** manually from *Windows App Manager*.  
+
+---
+
+<p align="center">
+  <sub>Made with ❤️ by <a href="https://github.com/YourUsername">YourUsername</a></sub>
+</p>
