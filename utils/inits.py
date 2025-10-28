@@ -38,8 +38,8 @@ def initSyncPlay():
               "2. Wait for few seconds to load everything in Syncplay gui\n"+
               "3. Under the shared playlist checkbox your will find \"http://localhost:8000\"\n"+
               "4. Righ click on it and choose \"Add localhost as trusted domain\"\n"+
-              " *If you don't do this step, media can't be played")
-        
+              "5. Close VLC\n"+
+              "[WARNING] If you don't do this step, watch together will not work\n")
         input("\nPress enter to continue.....")
         trusted_domain_set()
         
