@@ -40,7 +40,7 @@ def initSyncPlay():
               "4. Righ click on it and choose \"Add localhost as trusted domain\"\n"+
               "5. Close VLC\n"+
               "[WARNING] If you don't do this step, watch together will not work\n")
-        input("\nPress enter to continue.....")
+        input("\nPress enter to launch Syncplay.....")
         trusted_domain_set()
         
 
