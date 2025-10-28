@@ -1,5 +1,5 @@
 def console():
-    print("Enter a movie name or b to back:")
+    print("Enter a movie name or b to go back:")
     query = input("main->search movie > ").strip()
     if query =="b":
         return

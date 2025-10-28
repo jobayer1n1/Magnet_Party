@@ -1,6 +1,6 @@
 def console():    
     while True: 
-        print("Enter the magnet link or b to back:")
+        print("Enter the magnet link or b to go back:")
         print("main->add > ", end="")
         magnet = input().strip().lower()
             

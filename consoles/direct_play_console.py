@@ -13,7 +13,7 @@ def console():
         entry_type = "[DIR]" if os.path.isdir(os.path.join("cached_files", d)) else "[FILE]"
         print(f'{i}- {d} {entry_type}')
     
-    print("Enter the respective number to stream or b to back:")
+    print("\nEnter the respective number to stream or b to go back:")
     while True:
         print("main->play > ", end="")
         command = input()

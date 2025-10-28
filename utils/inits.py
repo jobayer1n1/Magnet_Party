@@ -1,7 +1,5 @@
 import os
-import time
 import subprocess
-import argparse
 
 LOG_FILE = "cached_files/logs.txt"
 CONFIG_DIR = "configs"

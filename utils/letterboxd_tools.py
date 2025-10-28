@@ -528,9 +528,9 @@ class LetterboxdLoginManager:
         login_file = os.path.join(self.logins_dir, f"{username}.json")
         if os.path.exists(login_file):
             os.remove(login_file)
-            print(f"✓ Login deleted for user: {username}")
+            print(f"Login deleted for user: {username}")
         else:
-            print(f"✗ No saved login found for user: {username}")
+            print(f"No saved login found for user: {username}")
 
 
 def display_saved_logins(login_manager):
@@ -581,12 +581,13 @@ def add_new_login(login_manager):
     print("\n➕ Add New Letterboxd Login")
     print("-" * 30)
     
+    print("\nEnter your Letterboxd credentials or press enter to go back:")
     username = input("Letterboxd Username: ").strip()
-    
+
     if not username:
-        print("Username cannot be empty!")
         return
     
+
     # Check if username already exists
     if username in login_manager.get_saved_usernames():
         overwrite = input(f"Login for '{username}' already exists. Overwrite? (y/n): ").strip().lower()
@@ -618,19 +619,25 @@ def letterboxd_login_manager_console():
     login_manager = LetterboxdLoginManager("logins")
     
     while True:
-        print("\nLetterboxd Login Manager")
-        print("a. View Saved Logins")
-        print("b. Add New Login")
-        print("c. Delete Login")
-        print("d. Back to Settings Menu")
-        
+        from utils.terminal_tools import clearScreen
+        clearScreen()
+        print("Letterboxd Login Manager")
+        print("1. View Saved Logins")
+        print("2. Add New Login")
+        print("3. Delete Login")
+
+        print("\nEnter a choice (1/2/3) or b to go back:")
         choice = input("main->letterboxd login manager > ").strip().lower()
-        
-        if choice == 'a':
+        from utils.terminal_tools import clearScreen
+        if choice == '1':
+            clearScreen()
             display_saved_logins(login_manager)
-        elif choice == 'b':
+            input("\nPress enter to go back to the manager...")
+        elif choice == '2':
+            clearScreen()
             add_new_login(login_manager)
-        elif choice == 'c':
+        elif choice == '3':
+            clearScreen()
             usernames = display_saved_logins(login_manager)
             if usernames:
                 del_choice = input("Enter username to delete or 'c' to cancel: ").strip()
@@ -640,7 +647,8 @@ def letterboxd_login_manager_console():
                     continue
                 else:
                     print("Username not found.")
-        elif choice == 'd':
+            input("\nPress enter to go back to the manager...")
+        elif choice == 'b':
             return
         else:
-            print("Invalid input. Please try again.")
+            print("Invalid input. Please try again.\n")

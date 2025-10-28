@@ -1,8 +1,8 @@
 from utils._1377x_tools import search_torrent
 
 def console():
-    print("Enter a series name or b to back:")
-    query = input("main->series search > ").strip()
+    print("Enter a series name or b to go back:")
+    query = input("main->search series> ").strip()
     if query =="b":
         return
     serieses = search_torrent(query, limit=5, category="TV")

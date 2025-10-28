@@ -6,8 +6,6 @@ import os
 import tempfile
 import platform
 import subprocess
-import time
-import sys
 
 def run_as_admin_and_wait(command):
     """
