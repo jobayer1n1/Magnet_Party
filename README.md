@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="icon.png" alt="Logo" width="120" />
+  <br/>
+  <t>Magnet_Party</t>
+</p>
+
 # Features :
 - Stream torrents
 - Watch with friends
@@ -22,3 +28,5 @@
 # Uninstallation :
 - Delete the whole folder
 - Uninstall nodejs manually from windows app manager
+
+
