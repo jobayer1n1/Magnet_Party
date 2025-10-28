@@ -115,8 +115,6 @@ def add_to_path_temp(directory_to_add):
 def load_player():
     info = read_file_safely(PLAYER_SETTING)
     if(info==None or info ==""):
-        print("Player setup is required.")
-        input("Press enter to search and set the media player.....")
         player_set()
     info = read_file_safely(PLAYER_SETTING)
     if info =="":
