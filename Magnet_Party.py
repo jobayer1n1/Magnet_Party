@@ -21,7 +21,7 @@ def main():
         time.sleep(.5)
         clearScreen()
         print("Commands: add magnet | play | watch together | search movie | search series | settings | ...more")
-        print("Enter help or h to see all commands [v1.3]")
+        print("Enter help or h to see all commands [v1.2]")
         print("main > ", end="")
         command = input()
         command = command.strip().lower()
@@ -78,3 +78,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
