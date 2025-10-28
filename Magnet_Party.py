@@ -37,8 +37,8 @@ def main():
             console()
         elif command == "add" or command == "a" or command=="add magnet" or command=="am":
             clearScreen()
-            from consoles.add_console import connsole
-            connsole()
+            from consoles.add_console import console
+            console()
 
         elif command=="lw" or command=="letterboxd watchlist":
             clearScreen()
@@ -62,16 +62,16 @@ def main():
             console()
         elif command == 'h' or command == 'help':
             print("Available commands:")
-            print(" add or a            - Add a new torrent via magnet link")
-            print(" play or p           - Stream a torrent from the list")
-            print(" watch together or wt- watch with your friend")
-            print(" search movie or sm  - search a movie from yts database")
-            print(" search series or ss - search a tv series from 1377x database")
-            print(" lw                  - letterboxd watchlist")
-            print(" settings or s       - Open settings menu")
-            print(" cache clear or cc   - Clear cached files and logs")
-            print(" help or h           - Show this help message")
-            print(" exit or e           - Exit the application")
+            print(" add or a or am             - Add a new torrent via magnet link")
+            print(" play or p                  - Stream a torrent from the list")
+            print(" watch together or wt       - watch with your friend")
+            print(" search movie or sm         - search a movie from yts database")
+            print(" search series or ss        - search a tv series from 1377x database")
+            print(" letterboxd watchlist or lw - letterboxd watchlist")
+            print(" settings or s              - Open settings menu")
+            print(" cache clear or cc          - Clear cached files and logs")
+            print(" help or h                  - Show this help message")
+            print(" exit or e                  - Exit the application")
             input("Press Enter to continue...")
         else:
             print("Invalid command. Please try again.")
