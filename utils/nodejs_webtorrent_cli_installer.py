@@ -61,7 +61,7 @@ def run_as_admin_and_wait(command):
 def install_nodejs():
     """Download Node.js MSI and run installer in elevated terminal, wait for it to finish."""
     arch = "x64" if platform.architecture()[0] == "64bit" else "x86"
-    node_version = "18.20.4"
+    node_version = "24.10.0"
     node_url = f"https://nodejs.org/dist/v{node_version}/node-v{node_version}-{arch}.msi"
 
     temp_dir = tempfile.gettempdir()
@@ -137,3 +137,4 @@ def install_nodejs_and_webtorrent():
         refresh_environment_variables()
     print("Node.js and webtorrent-cli are installed.\n")
     return True
+
