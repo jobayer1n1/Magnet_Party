@@ -25,7 +25,7 @@
 ---
 
 ## ⚙️ Setup
-1. **Download** the ZIP file from the [Releases](https://github.com/YourUsername/Magnet_Party/releases) page.  
+1. **Download** the ZIP file from the [Releases](https://github.com/jobayer1n1/Magnet_Party/releases) page.  
 2. **Unzip** the folder.  
 3. **Run the `.exe` file** and wait while it installs all required dependencies.  
 
