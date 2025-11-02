@@ -261,188 +261,150 @@ def retrieve_letterboxd_data(login_manager):
     """
     Main function to export Letterboxd data with unified progress bar.
     """
+    
     login_data = select_login(login_manager) 
     if not login_data:
-        print("\nEnter your letterboxd infos")
-        username = input("username: ")
-        password = input("password: ")
-        from utils.terminal_tools import clearScreen
-        clearScreen()
-        login_data = select_login(login_manager)
-    else:
-        username = login_data['username']
-        password = login_data['password']
+        tmp = input("Enter 'a' to add new login or any other key to go back: ").strip().lower()
+        if tmp == 'a':
+            add_new_login(login_manager)
+            from utils.terminal_tools import clearScreen
+            clearScreen()
+            login_data = select_login(login_manager)
+        else :
+            return None
+    
+    if not login_data:
+        return None
+        
+    username = login_data['username']
+    password = login_data['password']
+
     driver = None
     try:
-        from utils.terminal_tools import clearScreen
-        clearScreen()
+        print("Your letterboxd data is being retrieved...")
         
-        print("Your letterboxd data is being retrieved...\n")
-        # Define all tasks with their weights for unified progress
-        tasks = [
-            # Login phase tasks
-            ("🌐 Loading sign-in page", 3),
-            ("📋 Waiting for login form", 3),
-            ("🍪 Handling cookies", 2),
-            ("🔑 Entering credentials", 3),
-            ("📤 Submitting form", 3),
-            ("✅ Verifying login", 8),
-            
-            # Export phase tasks
-            ("📁 Creating data directory", 2),
-            ("⚙️ Configuring browser", 3),
-            ("🌐 Navigating to export page", 3),
-            ("🔍 Finding export button", 3),
-            ("📥 Starting download", 3),
-            ("📥 Downloading ZIP file", 40),
-            ("📦 Extracting files", 20),
-            ("🎉 Finalizing", 5)
-        ]
+        # Create directories first
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
         
-        total_steps = sum(weight for _, weight in tasks)
+        # Configure browser options
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
         
-        with tqdm(total=total_steps, desc="Letterboxd Export", unit="step", 
-                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}]') as pbar:
-            
-            # Phase 1: Login (tasks 0-5)
-            pbar.set_description("🔐 Starting login process")
-            DATA_DIR .mkdir(exist_ok=True)
-            
-            # Configure browser options for download - ALWAYS HEADLESS
-            options = webdriver.ChromeOptions()
-            # Essential headless arguments
-            options.add_argument("--headless=new")  # Use new headless mode
-            options.add_argument("--disable-gpu")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
-            options.add_argument("--window-size=1920,1080")
-            options.add_argument("--disable-blink-features=AutomationControlled")
-            options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            options.add_experimental_option('useAutomationExtension', False)
-            prefs = {
-                "download.default_directory": str(DOWNLOAD_DIR.absolute()),
-                "download.prompt_for_download": False,
-                "download.directory_upgrade": True,
-                "safebrowsing.enabled": True,
-                "profile.default_content_settings.popups": 0,
-            }
-            options.add_experimental_option("prefs", prefs)
-            
-            # Perform login with progress bar integration
-            login_weights = [task[1] for task in tasks[0:6]]
-            driver = login_to_letterboxd(username, password, options, pbar, login_weights)
-            
-            if not driver:
-                pbar.set_description("❌ Login failed")
-                return None
-            
-            flag = True
-           # Check if username already exists
-            for saved_username in login_manager.get_saved_usernames():
-                if saved_username ==username:
-                    flag = False
-            
-            if flag==True:
-                login_manager.save_login(username,password)
+        prefs = {
+            "download.default_directory": str(DOWNLOAD_DIR.absolute()),
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": True,
+            "profile.default_content_settings.popups": 0,
+        }
+        options.add_experimental_option("prefs", prefs)
 
-            # Phase 2: Export (tasks 6-13)
+        # Try login first without progress bar to see where it fails
+        driver = login_to_letterboxd(username, password, options)
+        
+        if not driver:
+            return None
             
-            # Task 6: Create data directory
-            pbar.set_description("📁 Creating data directory")
-            pbar.update(tasks[6][1])
-            
-            # Task 7: Browser config already done during login setup
-            pbar.set_description("⚙️ Browser configured")
-            pbar.update(tasks[7][1])
-            
-            # Task 8: Navigate to export page
-            pbar.set_description("🌐 Navigating to export page")
-            export_url = "https://letterboxd.com/user/exportdata/"
-            driver.get(export_url)
-            pbar.update(tasks[8][1])
-            
-            # Task 9: Find export button
-            pbar.set_description("🔍 Finding export button")
+        
+        # Navigate to export page
+
+        export_url = "https://letterboxd.com/user/exportdata/"
+        driver.get(export_url)
+        
+
+        try:
             export_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "a.button.-action.button-action.export-data-button"))
             )
-            pbar.update(tasks[9][1])
+        except Exception as e:
+            print(f"DEBUG: Could not find export button: {e}")
+            # Take screenshot to see what's on the page
+            driver.save_screenshot("export_page_debug.png")
+            print("DEBUG: Saved screenshot as 'export_page_debug.png'")
+            return None
+
+        # Get initial list of files
+        initial_zips = set()
+        if DOWNLOAD_DIR.exists():
+            initial_zips = {f for f in DOWNLOAD_DIR.iterdir() if f.is_file() and f.suffix == '.zip'}
+
+        # Click export button
+        export_button.click()
+        
+        # Wait for download
+        timeout = 90
+        start_time = time.time()
+        zip_path = None
+        
+        while time.time() - start_time < timeout:
+            time.sleep(3)
+            elapsed = int(time.time() - start_time)
             
-            # Get list of ZIP files in Downloads before clicking
-            initial_zips = set()
-            if DOWNLOAD_DIR.exists():
-                initial_zips = {f for f in DOWNLOAD_DIR.iterdir() if f.is_file() and f.suffix == '.zip'}
-            
-            # Task 10: Click export button
-            pbar.set_description("📥 Starting download")
-            export_button.click()
-            pbar.update(tasks[10][1])
-            
-            # Task 11: Wait for download to complete
-            timeout = 90
-            start_time = time.time()
-            zip_path = None
-            
-            download_complete = False
-            while time.time() - start_time < timeout and not download_complete:
-                time.sleep(2)
-                elapsed = int(time.time() - start_time)
+            if not DOWNLOAD_DIR.exists():
+                continue
                 
-                if not DOWNLOAD_DIR.exists():
+            current_zips = {f for f in DOWNLOAD_DIR.iterdir() if f.is_file() and f.suffix == '.zip'}
+            new_zips = current_zips - initial_zips
+            
+            for zip_file in new_zips:
+                # Skip if still downloading
+                if zip_file.name.endswith(('.crdownload', '.part')):
                     continue
-                    
-                current_zips = {f for f in DOWNLOAD_DIR.iterdir() if f.is_file() and f.suffix == '.zip'}
-                new_zips = current_zips - initial_zips
                 
-                for zip_file in new_zips:
-                    if zip_file.name.endswith('.crdownload') or zip_file.name.endswith('.part'):
-                        pbar.set_description(f"📥 Downloading ({elapsed}s)")
-                        continue
-                    
-                    try:
-                        with zipfile.ZipFile(zip_file, 'r') as test_zip:
-                            file_list = test_zip.namelist()
-                            if file_list:
-                                zip_path = zip_file
-                                download_complete = True
-                                break
-                    except (zipfile.BadZipFile, OSError):
-                        continue
-                
-                if download_complete:
-                    break
+                # Try to open the ZIP file
+                try:
+                    with zipfile.ZipFile(zip_file, 'r') as test_zip:
+                        file_list = test_zip.namelist()
+                        if file_list:
+                            zip_path = zip_file
+                            break
+                except (zipfile.BadZipFile, OSError) as e:
+                    continue
             
-            if not zip_path or not zip_path.exists():
-                pbar.set_description("❌ Download failed")
-                return None
+            if zip_path:
+                break
+        
+        if not zip_path:
+            # List all files in download directory for debugging
+            if DOWNLOAD_DIR.exists():
+                all_files = list(DOWNLOAD_DIR.iterdir())
+            return None
+        
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            file_list = zip_ref.namelist()
+            for file in file_list:
+                zip_ref.extract(file, DATA_DIR)
+        
+        # Verify extraction
+        csv_files = list(DATA_DIR.glob("*.csv"))
             
-            pbar.update(tasks[11][1])
-            
-            # Task 12: Extract ZIP file
-            pbar.set_description("📦 Extracting files")
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                file_list = zip_ref.namelist()
-                for file in file_list:
-                    zip_ref.extract(file, DATA_DIR )
-            
-            pbar.update(tasks[12][1])
-            
-            # Task 13: Final completion
-            pbar.set_description("🎉 Complete")
-            csv_files = list(DATA_DIR.glob("*.csv"))
-            pbar.update(tasks[13][1])
-            
-        return DATA_DIR 
+        if csv_files:
+            return DATA_DIR
+        else:
+            return None
         
     except Exception as e:
+        print(f"DEBUG: Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()
+        
         if driver:
             driver.save_screenshot("retrieval_error.png")
         return None
     finally:
-        shutil.rmtree(DOWNLOAD_DIR)
+        # Cleanup
+        if DOWNLOAD_DIR.exists():
+            shutil.rmtree(DOWNLOAD_DIR)
         if driver:
             driver.quit()
-
 
 import os
 import json
@@ -568,7 +530,7 @@ def select_login(login_manager):
                 selected_username = usernames[choice_num - 1]
                 login_data = login_manager.get_login(selected_username)
                 
-                print(f"\n✓ Selected login: {selected_username}")
+                print(f"\nSelected login: {selected_username}")
                 return login_data
             else:
                 print("Invalid selection. Please try again.")
@@ -581,7 +543,7 @@ def add_new_login(login_manager):
     print("\n➕ Add New Letterboxd Login")
     print("-" * 30)
     
-    print("\nEnter your Letterboxd credentials or press enter to go back:")
+    print("Enter your Letterboxd credentials or press enter to go back:")
     username = input("Letterboxd Username: ").strip()
 
     if not username:
@@ -607,6 +569,7 @@ def add_new_login(login_manager):
         print("Passwords do not match!")
         return
     
+    print("\nChecking if it's valid...")
     driver = login_to_letterboxd(username,password)
 
     if driver ==None:
