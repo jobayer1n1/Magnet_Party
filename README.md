@@ -51,9 +51,3 @@
 ## 🧹 Uninstallation
 1. Delete the entire Magnet_Party_vx.x folder.  
 2. Uninstall **Node.js** manually from *Windows App Manager*.  
-
----
-
-<p align="center">
-  <sub>made by <a href="https://github.com/jobayer1n1">jobayer1n1</a></sub>
-</p>
