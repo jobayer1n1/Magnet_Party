@@ -9,9 +9,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/jobayer1n1/Magnet_Party/releases"><img src="https://img.shields.io/github/v/release/jobayer1n1/Magnet_Party?style=for-the-badge&color=CBF3BB" alt="Release"></a>
-  <a href="https://github.com/jobayer1n1/Magnet_Party/issues"><img src="https://img.shields.io/github/issues/jobayer1n1/Magnet_Party?style=for-the-badge&color=BBDCE5" alt="Issues"></a>
-  <a href="https://github.com/jobayer1n1/Magnet_Party/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jobayer1n1/Magnet_Party?style=for-the-badge&color=F5EFE6" alt="License"></a>
+  <a href="https://github.com/jobayer1n1/Magnet_Party/releases">
+    <img src="https://img.shields.io/badge/RELEASE-Latest-CBF3BB?style=for-the-badge&logo=github&logoColor=white" alt="Release">
+  </a>
+  <a href="https://github.com/jobayer1n1/Magnet_Party/issues">
+    <img src="https://img.shields.io/badge/ISSUES-Open-BBDCE5?style=for-the-badge&logo=github&logoColor=white" alt="Issues">
+  </a>
+  <a href="https://github.com/jobayer1n1/Magnet_Party/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/LICENSE-View-F5EFE6?style=for-the-badge&logo=github&logoColor=white" alt="License">
+  </a>
 </p>
 
 ---
