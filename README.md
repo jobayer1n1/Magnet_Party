@@ -2,6 +2,8 @@
   <img src="icon.png" alt="Magnet_Party Logo" width="120" />
 </p>
 
+## API is down
+
 <h1 align="center">Magnet_Party</h1>
 
 <p align="center">
