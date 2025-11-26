@@ -1,3 +1,4 @@
+<h1 align="center"><b></b>❌ API IS DOWN</h1><br>
 <p align="center">
   <img src="icon.png" alt="Magnet_Party Logo" width="120" />
 </p>
